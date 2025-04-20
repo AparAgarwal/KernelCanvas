@@ -2,9 +2,10 @@
   "name": "kernel-canvas",
   "version": "1.0.0",
   "description": "A drag-and-drop interface for Docker management",
+  "type": "module",
   "main": "server/index.js",
   "scripts": {
-    "start": "node server/index.js",
+    "start": "node server/app.js",
     "client": "react-scripts start",
     "build": "react-scripts build",
     "dev": "concurrently \"npm run start\" \"npm run client\"",
