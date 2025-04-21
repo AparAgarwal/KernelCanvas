@@ -92,3 +92,42 @@ export async function pullImageService(req, res, next) {
     next(new AppError("Error pulling image from docker hub", 500));
   }
 }
+
+// create container
+// start container
+export async function startContainerService(req, res, next) {
+  try {
+    const docker = new Docker();
+    const { containerId } = req.body;
+
+    if (!containerId) {
+      next(new AppError("Container ID is required", 400));
+    }
+
+    const container = docker.getContainer(containerId);
+    await container.start();
+
+    res.status(200).json({ message: "Container started successfully" });
+  } catch (error) {
+    next(new AppError("Error starting container", 500));
+  }
+}
+
+// stop container
+export async function stopContainerService(req, res, next) {
+  try {
+    const docker = new Docker();
+    const { containerId } = req.body;
+
+    if (!containerId) {
+      next(new AppError("Container ID is required", 400));
+    }
+
+    const container = docker.getContainer(containerId);
+    await container.stop();
+
+    res.status(200).json({ message: "Container stopped successfully" });
+  } catch (error) {
+    next(new AppError("Error stopping container", 500));
+  }
+}
