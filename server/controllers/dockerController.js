@@ -48,3 +48,47 @@ export async function getNetworksService(_req, res, next) {
     next(new AppError("Error fetching networks", 500));
   }
 }
+
+// search image on docker hub
+export async function searchImageService(req, res, next) {
+  try {
+    const { s } = req.query;
+    if (!s) {
+      next(new AppError("Query parameter is required", 400));
+    }
+
+    // use v2 Docker Hub Registry API which is more reliable
+    const response = await fetch(
+      `https://registry.hub.docker.com/v2/search/repositories?query=${s}`
+    );
+    const data = await response.json();
+
+    res.status(200).json(data);
+  } catch (error) {
+    next(new AppError("Error searching image on docker hub", 500));
+  }
+}
+
+// pull image from docker hub
+export async function pullImageService(req, res, next) {
+  try {
+    const docker = new Docker();
+    const { imageName, tag = "latest" } = req.body;
+
+    docker.pull(`${imageName}:${tag}`, (err, stream) => {
+      if (err) {
+        next(new AppError("Error pulling umage from docker hub", 500));
+      }
+
+      docker.modem.followProgress(stream, (err, output) => {
+        if (err) {
+          next(new AppError("Error pulling image from docker hub", 500));
+        }
+
+        res.status(200).json({ message: "Image pulled successfully", output });
+      });
+    });
+  } catch (error) {
+    next(new AppError("Error pulling image from docker hub", 500));
+  }
+}
