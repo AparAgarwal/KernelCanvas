@@ -24,3 +24,27 @@ export async function getImagesService(_req, res, next) {
     next(new AppError("Error fetching images", 500));
   }
 }
+
+// retrieve all volumes
+export async function getVolumesService(_req, res, next) {
+  try {
+    const docker = new Docker();
+    const volumes = await docker.listVolumes();
+
+    return res.status(200).json(volumes);
+  } catch (error) {
+    next(new AppError("Error fetching volumes", 500));
+  }
+}
+
+// retrieve all networks
+export async function getNetworksService(_req, res, next) {
+  try {
+    const docker = new Docker();
+    const networks = await docker.listNetworks();
+
+    return res.status(200).json(networks);
+  } catch (error) {
+    next(new AppError("Error fetching networks", 500));
+  }
+}
