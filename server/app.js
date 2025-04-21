@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 
 import errorHandler from "./middlewares/errorHandlerMiddleware.js";
+import dockerRoutes from "./routes/dockerRoutes.js";
 
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -16,6 +17,8 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   return res.status(200).json({ status: "ok" });
 });
+
+app.use("/api", dockerRoutes);
 
 // error handler middleware
 app.use(errorHandler);
